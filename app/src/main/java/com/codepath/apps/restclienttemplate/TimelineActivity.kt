@@ -15,6 +15,7 @@ import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler
 import okhttp3.Headers
 import org.json.JSONException
 
+@Suppress("DEPRECATION")
 class TimelineActivity : AppCompatActivity() {
 
     lateinit var client: TwitterClient
@@ -59,9 +60,18 @@ class TimelineActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.compose) {
             val intent = Intent(this, ComposeActivity::class.java)
-            startActivity(intent)
+            startActivityForResult(intent,REQUEST_CODE )
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
+            val tweet = data?.getParcelableExtra("tweet") as Tweet
+            tweets.add(0, tweet)
+            adapter.notifyItemInserted(0)
+        }
+        super.onActivityResult(requestCode, resultCode, data)
     }
     
     fun populateHomeTimeline() {
@@ -96,6 +106,7 @@ class TimelineActivity : AppCompatActivity() {
 
     companion object {
         val TAG = "TimelineActivity"
+        val REQUEST_CODE = 10
     }
     
 }

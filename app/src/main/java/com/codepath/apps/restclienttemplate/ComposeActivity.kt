@@ -1,11 +1,13 @@
 package com.codepath.apps.restclienttemplate
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import com.codepath.apps.restclienttemplate.models.Tweet
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler
 import okhttp3.Headers
 
@@ -35,8 +37,13 @@ class ComposeActivity : AppCompatActivity() {
                 } else {
                     //Make an api call to Twitter to publish tweet
                     client.publishTweet(tweetContent, object: JsonHttpResponseHandler() {
-                        override fun onSuccess(statusCode: Int, headers: Headers?, json: JSON?) {
+                        override fun onSuccess(statusCode: Int, headers: Headers?, json: JSON) {
                             Log.i(TAG, "Successfully published tweet!")
+                            val tweet = Tweet.fromJson(json.jsonObject)
+                            val intent = Intent()
+                            intent.putExtra("tweet", tweet)
+                            setResult(RESULT_OK, intent)
+                            finish()
                         }
 
                         override fun onFailure(
